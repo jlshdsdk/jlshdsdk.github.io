@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>我的学习导航</title>
+<style>
+/* ==================================================
+   --- 样式区域 ---
+   想调整外观：直接改下面对应的颜色/数值，保存后刷新即生效
+   ================================================== */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: #f5f7fa;   /* 页面背景 */
+  color: #2c3e50;        /* 主文字颜色 */
+  font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+  line-height: 1.6;
+}
+
+/* 内容区域：最大1200px居中，两侧留白 */
+.wrap { max-width: 1200px; margin: 0 auto; padding: 36px 20px 60px; }
+
+/* 顶部标题与一句话简介 */
+header h1 { font-size: 26px; }
+header .sub { color: #7f8c9b; font-size: 14px; margin-top: 4px; }
+
+/* 搜索框 */
+#search {
+  width: 100%; max-width: 520px;
+  padding: 10px 16px; margin: 22px 0 4px;
+  font-size: 16px; color: #2c3e50; background: #fff;
+  border: 1px solid #e4e7ed; border-radius: 8px; outline: none;
+}
+#search:focus { border-color: #2980b9; }
+
+/* 分类标题 */
+.cat-title {
+  color: #2980b9; font-size: 19px;
+  margin: 28px 0 14px; padding-bottom: 8px;
+  border-bottom: 1px solid #e4e7ed;
+}
+
+/* 卡片网格：电脑3列 / 平板2列 / 手机1列 */
+.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+@media (max-width: 900px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
+
+/* 网站卡片：悬停轻微上浮 + 阴影加深 */
+.card {
+  position: relative; display: block; padding: 15px 16px;
+  background: #fff; border: 1px solid #e4e7ed; border-radius: 10px;
+  color: #2c3e50; text-decoration: none;
+  transition: transform .15s, box-shadow .15s;
+}
+.card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(44,62,80,.10); }
+.card .name { font-weight: 700; font-size: 16px; padding-right: 26px; }
+.card .desc { color: #8a94a0; font-size: 13px; margin-top: 4px; }
+
+/* 收藏星标（卡片右上角） */
+.star {
+  position: absolute; top: 8px; right: 8px; padding: 4px;
+  font-size: 18px; line-height: 1; color: #c0c8d0;
+  cursor: pointer; user-select: none;
+}
+.star.on { color: #f39c12; }
+
+/* 搜索无结果提示 */
+.empty { color: #8a94a0; text-align: center; padding: 50px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>我的学习导航</h1>
+    <p class="sub">点击卡片在新标签页打开网站；点击卡片右上角 ☆ 可收藏常用网站（保存在本机浏览器）</p>
+  </header>
+  <input id="search" type="search" placeholder="搜索网站名称、简介或分类…" aria-label="搜索网站">
+  <main id="main"></main>
+</div>
+
+<script>
+/* ==================================================
+   --- 网站数据区【在此增删网站】 ---
+
+   ★ 新增网站操作方法：
+     复制下面任意一行对象，粘贴到列表末尾，改掉 4 项内容：
+     { name: "网站名称", url: "完整链接", desc: "一句话简介", category: "所属分类" }
+     注意：上一行行末要保留英文逗号。
+
+   ★ 修改分类方法：
+     1) 改某网站的分类 → 直接改该行的 category 值（写一个新分类名会自动生成新分组）
+     2) 调整分组显示顺序 → 修改下面 CAT_ORDER 里文字的先后顺序
+
+   ★ 删除网站 → 整行删掉即可，其余不用动。
+   ※ 注意：各行的 url 不要重复，否则收藏状态会互相影响。
+   ================================================== */
+const SITES = [
+  { name: "C语言入门",    url: "https://jlshdsdk.github.io/ds-c-notes/#ch1-s1",   desc: "C 语言零基础入门带学笔记", category: "408专业课" },
+  { name: "数据结构带学", url: "https://jlshdsdk.github.io/data-structure-site/", desc: "数据结构课程同步带学",     category: "408专业课" },
+  { name: "英一带学",     url: "https://jlshdsdk.github.io/kaoyan-english1/",     desc: "考研英语一真题带学",       category: "考研英语" },
+  /* ↑ 在这行上面复制粘贴新网站 */
+];
+
+/* 分类显示顺序（不在列表里的新分类会自动排在最后显示） */
+const CAT_ORDER = ["408专业课", "考研英语"];
+
+/* ==================================================
+   --- 交互逻辑 ---（下面的代码日常维护无需改动）
+   ================================================== */
+const KEY = "learnNavFavs";   /* 收藏数据在浏览器 localStorage 里的键名 */
+const $ = s => document.querySelector(s);
+const esc = t => String(t).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const getFavs = () => { try { const v = JSON.parse(localStorage.getItem(KEY)); return Array.isArray(v) ? v : []; } catch (e) { return []; } };
+
+/* 收藏 / 取消收藏 */
+function toggleFav(url) {
+  const f = getFavs(), i = f.indexOf(url);
+  if (i > -1) { f.splice(i, 1); } else { f.push(url); }
+  try { localStorage.setItem(KEY, JSON.stringify(f)); } catch (e) { /* 存储被禁用时静默降级，不影响浏览 */ }
+}
+
+/* 生成一张卡片 */
+function cardHTML(s, fav) {
+  return '<a class="card" href="' + esc(s.url) + '" target="_blank" rel="noopener noreferrer">'
+    + '<span class="star' + (fav ? " on" : "") + '" role="button" tabindex="0" data-url="' + esc(s.url) + '" title="收藏 / 取消收藏">' + (fav ? "★" : "☆") + '</span>'
+    + '<div class="name">' + esc(s.name || "") + '</div>'
+    + '<div class="desc">' + esc(s.desc || "") + '</div></a>';
+}
+
+/* 渲染整页：常用收藏置顶，其余按分类分组 */
+function render() {
+  const q = $("#search").value.trim().toLowerCase();
+  const favs = getFavs();
+  const hit = s => !q || (s.name + " " + s.desc + " " + s.category).toLowerCase().indexOf(q) > -1;
+
+  let html = "";
+
+  /* 顶部「常用收藏」区 */
+  const favList = SITES.filter(s => favs.indexOf(s.url) > -1 && hit(s));
+  if (favList.length) {
+    html += '<h2 class="cat-title">常用收藏</h2><div class="grid">'
+          + favList.map(s => cardHTML(s, true)).join("") + '</div>';
+  }
+
+  /* 其余网站按分类分组（已收藏的只在顶部展示，不重复显示） */
+  const groups = [];
+  CAT_ORDER.forEach(c => groups.push([c, []]));
+  SITES.forEach(s => {
+    if (!hit(s) || favs.indexOf(s.url) > -1) return;
+    let g = null;
+    for (const x of groups) { if (x[0] === s.category) { g = x; break; } }
+    if (!g) { g = [s.category, []]; groups.push(g); }
+    g[1].push(s);
+  });
+  groups.forEach(g => {
+    if (g[1].length) {
+      html += '<h2 class="cat-title">' + esc(g[0]) + '</h2><div class="grid">'
+            + g[1].map(s => cardHTML(s, false)).join("") + '</div>';
+    }
+  });
+
+  $("#main").innerHTML = html || '<p class="empty">没有找到匹配的网站，换个关键词试试</p>';
+}
+
+/* 点击星标：切换收藏（阻止卡片跳转；支持键盘 Tab + 回车） */
+document.addEventListener("click", onStar);
+document.addEventListener("keydown", onStar);
+function onStar(e) {
+  const st = e.target.closest(".star");
+  if (!st || (e.type === "keydown" && e.key !== "Enter")) return;
+  e.preventDefault();
+  toggleFav(st.getAttribute("data-url"));
+  render();
+}
+
+/* 搜索：输入即时筛选 */
+$("#search").addEventListener("input", render);
+
+render();
+</script>
+
+<!-- ==================================================
+【GitHub Pages 部署步骤】（零基础版，全程约 5 分钟）
+
+  本仓库已完成部署，以下步骤仅供未来重建或迁移时参考：
+
+  1. 注册/登录 GitHub（github.com）
+  2. 右上角 + 号 → New repository 新建仓库
+     - Repository name: learn-nav（名字可自取）
+     - 选择 Public（免费版 GitHub Pages 必须公开仓库）
+     - 点击 Create repository
+  3. 在仓库页面点 "uploading an existing file"（上传文件）
+     - 把本文件 index.html 拖进去
+     - 点 Commit changes 提交
+  4. 开启 Pages：仓库 → Settings → 左侧 Pages
+     - Source 选 "Deploy from a branch"
+     - Branch 选 main（或 master），目录选 / (root)，点 Save
+  5. 等待 1~2 分钟，刷新 Settings → Pages 页，
+     顶部出现绿色提示，网址形如：
+     https://你的用户名.github.io/learn-nav/
+  6. 把这个网址收藏到手机/平板/电脑，任何设备都能直接打开
+
+  ※ 以后修改了 index.html，重新上传覆盖（或用 git push 提交），
+    等 1 分钟左右线上自动更新（浏览器按 Ctrl+F5 强制刷新可见）。
+
+【后续增删网站教程】（改文件 → 上传覆盖，两步搞定）
+
+  1. 用任意文本编辑器（记事本/VSCode）打开 index.html
+  2. 搜索「网站数据区」这几个字，定位到网站列表：
+
+     【新增】复制其中一行，粘贴到下一行，改 4 项内容：
+       { name: "线性代数", url: "https://xxx.com/", desc: "线代网课笔记", category: "考研数学" }
+       ※ category 写一个新名字（如"考研数学"），页面会自动多出一个新分组
+       ※ 注意上一行末尾的英文逗号不能丢
+     【删除】删掉那一整行（注意别把相邻行的逗号删多或删少）
+     【修改】直接改那一行里的文字即可
+  3. 保存文件，到 GitHub 仓库页面重新上传覆盖 index.html（Add file → Upload files）
+  4. 等 1 分钟线上生效，完事！
+
+  ※ 各字段含义：name=卡片标题 / url=点击跳转链接 / desc=灰色小字简介 / category=分组名
+  ※ 收藏数据保存在每台设备自己的浏览器里，换设备需重新点 ☆ 收藏
+================================================== -->
+</body>
+</html>
