@@ -102,11 +102,12 @@ const SITES = [
   { name: "计算机组成原理", url: "https://jlshdsdk.github.io/kaoyan-408-coa/", desc: "计算机组成原理自学课程", category: "408专业课" },
   { name: "英一带学", url: "https://jlshdsdk.github.io/kaoyan-english1/", desc: "考研英语一真题带学", category: "考研英语" },
   { name: "张宇1000题", url: "https://jlshdsdk.github.io/zhangyu-1000t/", desc: "张宇1000题题目与解析自学", category: "考研数学" },
+  { name: "大模型Wiki", url: "https://jlshdsdk.github.io/my-wiki/", desc: "大模型自学笔记 wiki", category: "个人wiki" },
   /* ↑ 在这行上面复制粘贴新网站 */
 ];
 
 /* 分类显示顺序（不在列表里的新分类会自动排在最后显示） */
-const CAT_ORDER = ["408专业课", "考研英语", "考研数学"];
+const CAT_ORDER = ["408专业课", "考研英语", "考研数学", "个人wiki"];
 
 /* ==================================================
    --- 交互逻辑 ---（下面的代码日常维护无需改动）
@@ -183,46 +184,16 @@ $("#search").addEventListener("input", render);
 render();
 </script>
 
-<!-- ==================================================
-【GitHub Pages 部署步骤】（零基础版，全程约 5 分钟）
-
-  本仓库已完成部署，以下步骤仅供未来重建或迁移时参考：
-
-  1. 注册/登录 GitHub（github.com）
-  2. 右上角 + 号 → New repository 新建仓库
-     - Repository name: learn-nav（名字可自取）
-     - 选择 Public（免费版 GitHub Pages 必须公开仓库）
-     - 点击 Create repository
-  3. 在仓库页面点 "uploading an existing file"（上传文件）
-     - 把本文件 index.html 拖进去
-     - 点 Commit changes 提交
-  4. 开启 Pages：仓库 → Settings → 左侧 Pages
-     - Source 选 "Deploy from a branch"
-     - Branch 选 main（或 master），目录选 / (root)，点 Save
-  5. 等待 1~2 分钟，刷新 Settings → Pages 页，
-     顶部出现绿色提示，网址形如：
-     https://你的用户名.github.io/learn-nav/
-  6. 把这个网址收藏到手机/平板/电脑，任何设备都能直接打开
-
-  ※ 以后修改了 index.html，重新上传覆盖（或用 git push 提交），
-    等 1 分钟左右线上自动更新（浏览器按 Ctrl+F5 强制刷新可见）。
-
-【后续增删网站教程】（改文件 → 上传覆盖，两步搞定）
-
-  1. 用任意文本编辑器（记事本/VSCode）打开 index.html
-  2. 搜索「网站数据区」这几个字，定位到网站列表：
-
-     【新增】复制其中一行，粘贴到下一行，改 4 项内容：
-       { name: "线性代数", url: "https://xxx.com/", desc: "线代网课笔记", category: "考研数学" }
-       ※ category 写一个新名字（如"考研数学"），页面会自动多出一个新分组
-       ※ 注意上一行末尾的英文逗号不能丢
-     【删除】删掉那一整行（注意别把相邻行的逗号删多或删少）
-     【修改】直接改那一行里的文字即可
-  3. 保存文件，到 GitHub 仓库页面重新上传覆盖 index.html（Add file → Upload files）
-  4. 等 1 分钟线上生效，完事！
-
-  ※ 各字段含义：name=卡片标题 / url=点击跳转链接 / desc=灰色小字简介 / category=分组名
-  ※ 收藏数据保存在每台设备自己的浏览器里，换设备需重新点 ☆ 收藏
-================================================== -->
+<!--
+【维护速查】完整零基础教程见仓库 README.md
+【增删网站】记事本打开本文件，搜「网站数据区」：
+  新增 = 复制一行改4项（category 写新名字会自动建新分组；上一行末尾英文逗号别丢）
+  删除 = 删整行；修改 = 直接改那行文字
+  保存后到 GitHub 仓库页 Add file → Upload files 覆盖上传 index.html，约 1 分钟生效
+【重新部署】新建 Public 仓库并上传本文件，Settings → Pages →
+  Branch 选 main 与 /(root) 保存，即得 https://用户名.github.io/仓库名/
+字段含义：name=卡片标题 url=链接 desc=简介 category=分组名
+收藏保存在各设备浏览器本地，换设备需重新点 ☆
+-->
 </body>
 </html>
