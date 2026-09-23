@@ -8,65 +8,141 @@
 /* ==================================================
    --- 样式区域 ---
    想调整外观：直接改下面对应的颜色/数值，保存后刷新即生效
+   nav-visual-20260923
    ================================================== */
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-  background: #f5f7fa;   /* 页面背景 */
-  color: #2c3e50;        /* 主文字颜色 */
+  min-height: 100vh;
+  background: #f4f7fb;          /* 页面背景 */
+  color: #1c2834;               /* 主文字颜色 */
   font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
   line-height: 1.6;
 }
 
-/* 内容区域：最大1200px居中，两侧留白 */
-.wrap { max-width: 1200px; margin: 0 auto; padding: 36px 20px 60px; }
+/* 内容区宽 1032px，两侧至少 24px；标题带单独铺满视口 */
+.wrap { width: 100%; margin: 0; padding: 0 0 72px; }
 
-/* 顶部标题与一句话简介 */
-header h1 { font-size: 26px; }
-header .sub { color: #7f8c9b; font-size: 14px; margin-top: 4px; }
-
-/* 搜索框 */
-#search {
-  width: 100%; max-width: 520px;
-  padding: 10px 16px; margin: 22px 0 4px;
-  font-size: 16px; color: #2c3e50; background: #fff;
-  border: 1px solid #e4e7ed; border-radius: 8px; outline: none;
+/* 顶部标题带 */
+header {
+  margin: 0;
+  padding: 40px max(24px, calc((100% - 1032px) / 2)) 52px;
+  background: linear-gradient(155deg, #14324f 0%, #1d4e78 62%, #24658f 100%);
 }
-#search:focus { border-color: #2980b9; }
+header h1 {
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: #fff;
+}
+header .sub {
+  max-width: 46em;
+  margin-top: 8px;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 14px;
+}
+
+/* 搜索框：压在标题带下沿，与卡片左缘对齐 */
+#search {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: min(560px, calc(100% - 48px));
+  margin: -26px 0 6px max(24px, calc((100% - 1032px) / 2));
+  padding: 13px 16px;
+  font-size: 15px;
+  color: #1c2834;
+  background: #fff;
+  border: 1px solid #d7e1ec;
+  border-radius: 12px;
+  outline: none;
+  box-shadow: 0 8px 22px rgba(20, 50, 79, 0.12);
+}
+#search::placeholder { color: #93a1af; }
+#search:focus {
+  border-color: #2f6fad;
+  box-shadow: 0 0 0 4px rgba(47, 111, 173, 0.16), 0 8px 22px rgba(20, 50, 79, 0.1);
+}
 
 /* 分类标题 */
 .cat-title {
-  color: #2980b9; font-size: 19px;
-  margin: 28px 0 14px; padding-bottom: 8px;
-  border-bottom: 1px solid #e4e7ed;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 32px 0 14px;
+  padding: 0;
+  border: 0;
+  color: #1a4f86;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+.cat-title::before {
+  content: "";
+  width: 4px;
+  height: 15px;
+  border-radius: 4px;
+  background: #2f6fad;
 }
 
 /* 卡片网格：电脑3列 / 平板2列 / 手机1列 */
-.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+#main {
+  width: min(1032px, calc(100% - 48px));
+  margin: 0 auto;
+}
+.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
 @media (max-width: 900px) { .grid { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
+@media (max-width: 600px) {
+  header { padding-top: 28px; padding-bottom: 46px; }
+  header h1 { font-size: 26px; }
+  .wrap { padding-bottom: 56px; }
+  .grid { grid-template-columns: 1fr; }
+}
 
 /* 网站卡片：悬停轻微上浮 + 阴影加深 */
 .card {
-  position: relative; display: block; padding: 15px 16px;
-  background: #fff; border: 1px solid #e4e7ed; border-radius: 10px;
-  color: #2c3e50; text-decoration: none;
-  transition: transform .15s, box-shadow .15s;
+  position: relative;
+  display: block;
+  padding: 18px 18px 16px;
+  background: #fff;
+  border: 1px solid #e4ebf3;
+  border-radius: 14px;
+  color: #1c2834;
+  text-decoration: none;
+  box-shadow: 0 1px 2px rgba(20, 50, 79, 0.04);
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
 }
-.card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(44,62,80,.10); }
-.card .name { font-weight: 700; font-size: 16px; padding-right: 26px; }
-.card .desc { color: #8a94a0; font-size: 13px; margin-top: 4px; }
+.card:hover {
+  transform: translateY(-3px);
+  border-color: #c5d8ec;
+  box-shadow: 0 12px 28px rgba(20, 50, 79, 0.08);
+}
+.card:focus-visible { outline: 2px solid #2f6fad; outline-offset: 3px; }
+.card .name { font-weight: 700; font-size: 16px; padding-right: 28px; }
+.card .desc { color: #7b8b9a; font-size: 13px; line-height: 1.55; margin-top: 6px; }
 
 /* 收藏星标（卡片右上角） */
 .star {
-  position: absolute; top: 8px; right: 8px; padding: 4px;
-  font-size: 18px; line-height: 1; color: #c0c8d0;
-  cursor: pointer; user-select: none;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  font-size: 16px;
+  line-height: 1;
+  color: #c5ced6;
+  cursor: pointer;
+  user-select: none;
 }
-.star.on { color: #f39c12; }
+.star:hover { color: #d99a08; background: #fff8e8; }
+.star.on { color: #e0a106; }
+.star:focus-visible { outline: 2px solid #e0a106; outline-offset: 1px; }
 
 /* 搜索无结果提示 */
-.empty { color: #8a94a0; text-align: center; padding: 50px 0; }
+.empty { color: #7b8b9a; text-align: center; padding: 64px 0; font-size: 14px; }
 </style>
 </head>
 <body>
