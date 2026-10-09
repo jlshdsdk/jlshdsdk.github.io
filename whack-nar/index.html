@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#79c24f">
+<meta name="description" content="打地鼠·纳尔篇——一只叫纳尔的奶牛猫在线求拍。手机打开即玩。">
+<title>打地鼠·纳尔篇</title>
+<link rel="icon" type="image/webp" href="./assets/nar/avatar.webp">
+<link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+<div id="app">
+
+  <!-- ============ 开始页 ============ -->
+  <section id="screen-start" class="screen">
+    <div class="start-card">
+      <div class="avatar-frame" id="avatar-frame-start">
+        <img id="avatar-img-start" src="./assets/nar/avatar.webp" alt="纳尔头像">
+        <!-- 图片加载失败时由 JS 注入 CSS 奶牛猫兜底 -->
+        <div class="cat-css head-only" aria-hidden="true"></div>
+      </div>
+      <h1><span class="paw">🐾</span> 打地鼠 · 纳尔篇</h1>
+      <p class="tagline">
+        主角是一只叫<strong>纳尔</strong>的奶牛猫。<br>
+        在它缩回洞之前轻轻拍中它——<br>
+        被拍中会委屈，但很快又探头来看。
+      </p>
+      <button id="btn-start" class="btn-primary" type="button">开始游戏</button>
+      <p class="best-line">历史最高分：<span id="best-start">0</span></p>
+      <p class="hint-line">普通纳尔 +10 ・ 快速纳尔 +25 ・ 装睡纳尔不能拍！</p>
+    </div>
+  </section>
+
+  <!-- ============ 游戏页 ============ -->
+  <section id="screen-game" class="screen hidden">
+    <header class="hud">
+      <span class="chip">分数 <b id="hud-score">0</b></span>
+      <span class="chip">生命 <b id="hud-lives" class="hearts" aria-label="生命"></b></span>
+      <span class="chip">关卡 <b id="hud-level">1</b></span>
+      <span class="chip">倒计时 <b id="hud-timer">15</b>s</span>
+      <button id="btn-mute" class="btn-icon" type="button" aria-label="静音开关">🔊</button>
+    </header>
+
+    <div id="combo-badge" class="combo-badge hidden">COMBO ×<span id="combo-n">0</span></div>
+
+    <main class="yard" id="yard">
+      <div class="fence" aria-hidden="true">
+        <img class="fence-cat" id="fence-cat" src="./assets/nar/decor-1.webp" alt="">
+      </div>
+      <div id="board" class="board" aria-label="打地鼠棋盘"></div>
+    </main>
+
+    <p class="tip">拍普通纳尔 +10 ・ 拍快速纳尔 +25 ・ 装睡纳尔不能拍（扣 15 分扣 1 命）・ 连击 5 次触发「纳尔暴走」</p>
+
+    <div id="level-toast" class="level-toast hidden"></div>
+    <div id="pause-mask" class="pause-mask">已暂停 · 回到页面自动继续</div>
+  </section>
+
+  <!-- ============ 结束页 ============ -->
+  <section id="screen-over" class="screen hidden">
+    <div class="over-card">
+      <div class="avatar-frame small" id="avatar-frame-over">
+        <img src="./assets/nar/avatar.webp" alt="纳尔头像">
+        <div class="cat-css head-only" aria-hidden="true"></div>
+      </div>
+      <h2>本局战报</h2>
+      <div class="stat-row"><span>本局得分</span><b id="over-score">0</b></div>
+      <div class="stat-row"><span>最高连击</span><b id="over-combo">×0</b></div>
+      <div class="stat-row"><span>命中率</span><b id="over-acc">0%</b></div>
+      <div class="stat-row"><span>历史最高</span><b id="over-best-score">0</b></div>
+      <p id="over-record" class="record-line hidden">🎉 新纪录！纳尔表示记仇</p>
+      <div id="confetti" class="confetti" aria-hidden="true"></div>
+      <div class="btn-col">
+        <button id="btn-again" class="btn-primary" type="button">再来一局</button>
+        <button id="btn-share" class="btn-secondary" type="button">保存战报</button>
+        <button id="btn-home" class="btn-text" type="button">回到首页</button>
+      </div>
+    </div>
+  </section>
+
+</div>
+<script src="./game.js"></script>
+</body>
+</html>
