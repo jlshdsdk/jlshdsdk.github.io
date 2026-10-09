@@ -392,6 +392,7 @@ function spawnCat(i, form) {
   const pair = pick(CONFIG.assets.peekPairs);
   assignImg(h.imgs.peek, pair[0]);
   assignImg(h.imgs.up, pair[1]);
+  assignImg(h.imgs.hit, CONFIG.assets.hit);   // 被打表情照，命中时切换
 
   if (form === 'sleep') {
     assignImg(h.imgs.sleep, CONFIG.assets.sleep);
@@ -548,6 +549,7 @@ function onHit(i) {
     loseLife();
     resetCombo();
     h.el.classList.add('is-wrong');
+    setSpr(h, 'hit');          // 被打的委屈脸
     showPopup(h, '-' + CONFIG.wrongPenalty, 'bad');
     sfx.wrong();
     shakeYard();
